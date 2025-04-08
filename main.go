@@ -34,7 +34,14 @@ func main() {
 			count.Words++
 		case char == 'A' || char == 'E' || char == 'I' || char == 'O' || char == 'U' || char == 'a' || char == 'e' || char == 'i' || char == 'o' || char == 'u':
 			count.Vowels++
-		
+		case char == '.' || char == '!' || char == '?' || char == ',' || char == ':' || char == ';' || char == '(' || char == ')' || char == '[' || char == ']' || char == '{' || char == '}':
+			count.Punctuations++
+			if char == ',' {
+				count.Words++
+			}
+			count.Words++
+		case char == '\n':
+			count.Lines++
 
 		}
 	}
