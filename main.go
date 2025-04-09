@@ -45,10 +45,10 @@ func main() {
 
 		}
 	}
-	count.Words = count.Lines + count.Spaces // Assuming words are separated by spaces and new lines
-	count.Lines++                            // Increment line count for the last line if it doesn't end with a newline
+	count.Words = count.Lines + count.Spaces
+	count.Lines++                            // Increment line count for the last line
 	// Print results
-	fmt.Println("Number of lines:", count.Lines+1) // +1 to count the last line if no newline at the end
+	fmt.Println("Number of lines:", count.Lines+1) // +1 to count the last line
 	fmt.Println("Number of words:", count.Words)
 	fmt.Println("Number of vowels:", count.Vowels)
 	fmt.Println("Number of punctuations:", count.Punctuations)
