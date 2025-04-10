@@ -1,10 +1,10 @@
 package utils
 
 import (
-	"Go_Training/models"
+	"github.com/Talal52/Go_Count/models"
 	"fmt"
 	"os"
-    "Go_Training/cmd"
+    "github.com/Talal52/Go_Count/cmd"
 )
 
 func ReadFile(filePath string) (int, int, int, int, int, error) {

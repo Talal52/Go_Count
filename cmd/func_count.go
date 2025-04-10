@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"Go_Training/models"
+	"github.com/Talal52/Go_Count/models"
 	"fmt"
 )
 

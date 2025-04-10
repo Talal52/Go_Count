@@ -1,7 +1,7 @@
 package main
 
 import (
-    "Go_Training/utils"
+    "github.com/Talal52/Go_Count/utils"
     "fmt"
     "time"
 )
