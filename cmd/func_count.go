@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"Go_Training/models"
+	"fmt"
 )
 
 func Count(fileContent string, channel chan models.Count) {
@@ -34,6 +35,7 @@ func Count(fileContent string, channel chan models.Count) {
 	// fmt.Println("Number of vowels:", count.Vowels)
 	// fmt.Println("Number of punctuations:", count.Punctuations)
 	// fmt.Println("Number of spaces:", count.Spaces)
-	channel <-count
+	fmt.Printf("chunk results=====Lines:%d, Words:%d, Vowels:%d, Punctuations:%d, Spaces:%d\n", count.Lines, count.Words, count.Vowels, count.Punctuations, count.Spaces)
+	channel <- count
 
 }
