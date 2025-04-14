@@ -5,17 +5,13 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Talal52/Go_Count/models"
 	"github.com/Talal52/Go_Count/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 )
 
 var secretKey = []byte("secret-key")
-
-type User struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
 
 func main() {
 	start := time.Now()
@@ -59,13 +55,13 @@ func main() {
 // === HANDLERS ===
 
 func loginHandler(c *gin.Context) {
-	var u User
+	var u models.User
 	if err := c.ShouldBindJSON(&u); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
 
-	if u.Username == "Chek" && u.Password == "123456" {
+	if u.Username == "Talal" && u.Password == "123456" {
 		tokenString, err := createToken(u.Username)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not generate token"})

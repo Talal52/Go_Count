@@ -7,3 +7,8 @@ type Count struct {
 	Punctuations int
 	Spaces       int
 }
+
+type User struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
