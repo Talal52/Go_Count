@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/Talal52/Go_Count/utils"
@@ -27,52 +25,26 @@ func main() {
 	router.POST("/login", loginHandler)
 	router.GET("/protected", authMiddleware(), protectedHandler)
 
-	// File processing route
 	router.POST("/readFile", authMiddleware(), func(c *gin.Context) {
-		// Get the file name from the request body
-		var requestBody struct {
-			FileName string `json:"file_name"`
-		}
-		if err := c.ShouldBindJSON(&requestBody); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
-			return
-		}
+		// Hardcoded file name
+		fileName := "file.txt"
 
-		// Open the specified file
-		file, err := os.Open(requestBody.FileName)
+		// Pass the file path to AnalyzeFileContent
+		lines, words, vowels, punctuations, spaces, err := utils.AnalyzeFileContent(fileName)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error opening file"})
-			return
-		}
-		defer file.Close()
-
-		scanner := bufio.NewScanner(file)
-		chunkResults := []gin.H{}
-		for scanner.Scan() {
-			line := scanner.Text()
-			lines, words, vowels, punctuations, spaces, err := utils.AnalyzeFileContent(line)
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Error processing chunk"})
-				return
-			}
-
-			// Append the result of the current chunk
-			chunkResults = append(chunkResults, gin.H{
-				"lines":        lines,
-				"words":        words,
-				"vowels":       vowels,
-				"punctuations": punctuations,
-				"spaces":       spaces,
-			})
-		}
-
-		if err := scanner.Err(); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error reading file"})
+			fmt.Println("Error processing file:", err) // Log the error
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error processing file", "details": err.Error()})
 			return
 		}
 
-		// Return results for all chunks
-		c.JSON(http.StatusOK, gin.H{"chunk_results": chunkResults})
+		// Return the results
+		c.JSON(http.StatusOK, gin.H{
+			"lines":        lines,
+			"words":        words,
+			"vowels":       vowels,
+			"punctuations": punctuations,
+			"spaces":       spaces,
+		})
 	})
 
 	// Start the server
