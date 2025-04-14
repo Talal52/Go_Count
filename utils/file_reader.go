@@ -7,7 +7,7 @@ import (
     "github.com/Talal52/Go_Count/cmd"
 )
 
-func ReadFile(filePath string) (int, int, int, int, int, error) {
+func AnalyzeFileContent(filePath string) (int, int, int, int, int, error) {
     var Lines, Words, Vowels, Punctuations, Spaces int
 
     content, err := os.ReadFile(filePath)
