@@ -16,6 +16,7 @@ func main() {
     router := gin.Default()
 
     // Authentication routes
+	router.POST("/signup", routes.SignupHandler)
     router.POST("/login", routes.LoginHandler)
     router.GET("/protected", routes.AuthMiddleware(), routes.ProtectedHandler)
 
