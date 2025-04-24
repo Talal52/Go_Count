@@ -1,37 +1,50 @@
 package utils
 
 import (
-	"github.com/Talal52/Go_Count/models"
 	"fmt"
 	"os"
-    "github.com/Talal52/Go_Count/cmd"
+
+	"github.com/Talal52/Go_Count/cmd"
+	"github.com/Talal52/Go_Count/db"
+	"github.com/Talal52/Go_Count/models"
 )
 
-func AnalyzeFileContent(filePath string) (int, int, int, int, int, error) {
+func AnalyzeFileContent(filePath string, username string) (int, int, int, int, int, error) {
     var Lines, Words, Vowels, Punctuations, Spaces int
 
+    // Read the content
     content, err := os.ReadFile(filePath)
-    if err!=nil{
+    if err != nil {
         fmt.Println("Error reading file:", err)
         return 0, 0, 0, 0, 0, err
     }
-    routines:= 4
-	channel := make(chan models.Count)
-	chunk := len(content) / routines
-	for i := 0; i < routines; i++ {
-		start := i * chunk
-		end := start + chunk
-		go cmd.Count(string(content[start:end]), channel)
-    }
-    for i := 0; i < routines; i++ {
-		Counts := <-channel
-		Lines = Lines + Counts.Lines
-		Words = Words + Counts.Words
-		Vowels = Vowels + Counts.Vowels
-		Punctuations = Punctuations + Counts.Punctuations
-        Spaces= Spaces+Counts.Spaces
-	}
-		
-		return Lines, Words, Vowels, Punctuations, Spaces, nil
 
+    // Process the file content in chunks using goroutines
+    routines := 4
+    channel := make(chan models.Count)
+    chunk := len(content) / routines
+    for i := 0; i < routines; i++ {
+        start := i * chunk
+        end := start + chunk
+        if i == routines-1 {
+            // Ensure the last chunk includes the remainder
+            end = len(content)
+        }
+        go cmd.Count(string(content[start:end]), channel)
+    }
+
+    // Collect results from all goroutines
+    for i := 0; i < routines; i++ {
+        Counts := <-channel
+        Lines += Counts.Lines
+        Words += Counts.Words
+        Vowels += Counts.Vowels
+        Punctuations += Counts.Punctuations
+        Spaces += Counts.Spaces
+    }
+
+    // Store the results in the database
+    db.StoreResults(username, filePath, Lines, Words, Vowels, Punctuations, Spaces)
+
+    return Lines, Words, Vowels, Punctuations, Spaces, nil
 }
