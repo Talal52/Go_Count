@@ -3,7 +3,6 @@ package db
 import (
 	"errors"
 	"fmt"
-	"time"
 )
 
 func CreateUser(username, password string) error {
@@ -18,26 +17,26 @@ func CreateUser(username, password string) error {
 	return nil
 }
 func StoreResults(username, fileName string, lines, words, vowels, punctuations, spaces int) error {
-    query := `
+	query := `
     INSERT INTO results (username, file_name, lines, words, vowels, punctuations, spaces)
     VALUES ($1, $2, $3, $4, $5, $6, $7)`
-    _, err := DB.Exec(query, username, fileName, lines, words, vowels, punctuations, spaces)
-    if err != nil {
-        return fmt.Errorf("could not store results: %w", err)
-    }
-    return nil
+	_, err := DB.Exec(query, username, fileName, lines, words, vowels, punctuations, spaces)
+	if err != nil {
+		return fmt.Errorf("could not store results: %w", err)
+	}
+	return nil
 }
 
-func FetchHistory(username string) []map[string]interface{} {
+func FetchHistory(username string, limit, offset int) ([]map[string]interface{}, error) {
 	query := `
     SELECT file_name, lines, words, vowels, punctuations, spaces, created_at
     FROM results
     WHERE username = $1
-    ORDER BY created_at DESC`
-	rows, err := DB.Query(query, username)
+    ORDER BY created_at DESC
+	LIMIT $2 OFFSET $3`
+	rows, err := DB.Query(query, username, limit, offset)
 	if err != nil {
-		fmt.Println("Error fetching history:", err)
-		return nil
+		return nil, fmt.Errorf("error fetching history: %w", err)
 	}
 	defer rows.Close()
 
@@ -45,12 +44,11 @@ func FetchHistory(username string) []map[string]interface{} {
 	for rows.Next() {
 		var fileName string
 		var lines, words, vowels, punctuations, spaces int
-		var createdAt time.Time
+		var createdAt string
 
 		err := rows.Scan(&fileName, &lines, &words, &vowels, &punctuations, &spaces, &createdAt)
 		if err != nil {
-			fmt.Println("Error scanning row:", err)
-			continue
+			return nil, fmt.Errorf("error scanning row: %w", err)
 		}
 
 		history = append(history, map[string]interface{}{
@@ -64,5 +62,5 @@ func FetchHistory(username string) []map[string]interface{} {
 		})
 	}
 
-	return history
+	return history, nil
 }
