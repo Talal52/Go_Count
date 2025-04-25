@@ -5,17 +5,18 @@ import (
     "github.com/gin-gonic/gin"
 )
 
+
 func SetupRoutes(router *gin.Engine) {
     // Authentication routes
     router.POST("/signup", handlers.SignupHandler)
     router.POST("/login", handlers.LoginHandler)
 
-    // File processing route
-    router.POST("/readFile", handlers.FileProcessingHandler)
-
-    // History route
-    router.GET("/history", handlers.HistoryHandler)
-
-	// Protected route
-	router.GET("/protected", handlers.ProtectedHandler)
+    // Protected routes
+    protected := router.Group("/")
+    protected.Use(AuthMiddleware())
+    {
+        protected.GET("/protected", handlers.ProtectedHandler)
+        protected.POST("/readFile", handlers.FileProcessingHandler)
+        protected.GET("/history", handlers.HistoryHandler)
+    }
 }
