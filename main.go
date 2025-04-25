@@ -14,17 +14,7 @@ func main() {
     db.InitDB()
 
     router := gin.Default()
-
-    // Authentication routes
-	router.POST("/signup", routes.SignupHandler)
-    router.POST("/login", routes.LoginHandler)
-    router.GET("/protected", routes.AuthMiddleware(), routes.ProtectedHandler)
-
-    // File processing route
-    router.POST("/readFile", routes.AuthMiddleware(), routes.FileProcessingHandler)
-
-    // History route
-    router.GET("/history", routes.AuthMiddleware(), routes.HistoryHandler)
+    routes.SetupRoutes(router)
 
     // Start the server
     fmt.Println("Starting the server at :4000")
