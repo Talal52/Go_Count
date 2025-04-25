@@ -1,12 +1,12 @@
 package utils
 
 import (
-	"fmt"
-	"os"
+    "fmt"
+    "os"
 
-	"github.com/Talal52/Go_Count/cmd"
-	"github.com/Talal52/Go_Count/db"
-	"github.com/Talal52/Go_Count/models"
+    "github.com/Talal52/Go_Count/cmd"
+    "github.com/Talal52/Go_Count/db" // Ensure this is correctly imported
+    "github.com/Talal52/Go_Count/models"
 )
 
 func AnalyzeFileContent(filePath string, username string) (int, int, int, int, int, error) {
@@ -23,6 +23,7 @@ func AnalyzeFileContent(filePath string, username string) (int, int, int, int, i
     routines := 4
     channel := make(chan models.Count)
     chunk := len(content) / routines
+
     for i := 0; i < routines; i++ {
         start := i * chunk
         end := start + chunk
@@ -44,7 +45,11 @@ func AnalyzeFileContent(filePath string, username string) (int, int, int, int, i
     }
 
     // Store the results in the database
-    db.StoreResults(username, filePath, Lines, Words, Vowels, Punctuations, Spaces)
+    err = db.StoreResults(username, filePath, Lines, Words, Vowels, Punctuations, Spaces)
+    if err != nil {
+        fmt.Println("Error storing results in database:", err)
+        return 0, 0, 0, 0, 0, err
+    }
 
     return Lines, Words, Vowels, Punctuations, Spaces, nil
 }

@@ -17,14 +17,15 @@ func CreateUser(username, password string) error {
 	}
 	return nil
 }
-func StoreResults(username, fileName string, lines, words, vowels, punctuations, spaces int) {
-	query := `
+func StoreResults(username, fileName string, lines, words, vowels, punctuations, spaces int) error {
+    query := `
     INSERT INTO results (username, file_name, lines, words, vowels, punctuations, spaces)
     VALUES ($1, $2, $3, $4, $5, $6, $7)`
-	_, err := DB.Exec(query, username, fileName, lines, words, vowels, punctuations, spaces)
-	if err != nil {
-		fmt.Println("Error storing results:", err)
-	}
+    _, err := DB.Exec(query, username, fileName, lines, words, vowels, punctuations, spaces)
+    if err != nil {
+        return fmt.Errorf("could not store results: %w", err)
+    }
+    return nil
 }
 
 func FetchHistory(username string) []map[string]interface{} {
