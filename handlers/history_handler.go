@@ -9,7 +9,7 @@ import (
 )
 
 func HistoryHandler(c *gin.Context) {
-    username, exists := c.Get("username")
+    userID, exists := c.Get("user_id")
     if !exists {
         c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
         return
@@ -35,7 +35,7 @@ func HistoryHandler(c *gin.Context) {
     offset := (page - 1) * limit
 
     // Fetch paginated history
-    history, err := db.FetchHistory(username.(string), limit, offset)
+    history, err := db.FetchHistory(userID.(int), limit, offset)
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Error fetching history", "details": err.Error()})
         return

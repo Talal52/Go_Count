@@ -10,7 +10,7 @@ import (
 )
 
 func FileProcessingHandler(c *gin.Context) {
-    username, exists := c.Get("username")
+    userID, exists := c.Get("user_id")
     if !exists {
         c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
         return
@@ -36,7 +36,7 @@ func FileProcessingHandler(c *gin.Context) {
     }
 
     // Process the file content
-    lines, words, vowels, punctuations, spaces, err := utils.AnalyzeFileContent(filePath, username.(string))
+    lines, words, vowels, punctuations, spaces, err := utils.AnalyzeFileContent(filePath, userID.(int))
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Error processing file", "details": err.Error()})
         return

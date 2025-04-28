@@ -5,11 +5,11 @@ import (
     "os"
 
     "github.com/Talal52/Go_Count/cmd"
-    "github.com/Talal52/Go_Count/db" // Ensure this is correctly imported
+    "github.com/Talal52/Go_Count/db"
     "github.com/Talal52/Go_Count/models"
 )
 
-func AnalyzeFileContent(filePath string, username string) (int, int, int, int, int, error) {
+func AnalyzeFileContent(filePath string, userID int) (int, int, int, int, int, error) {
     var Lines, Words, Vowels, Punctuations, Spaces int
 
     // Read the content
@@ -28,7 +28,6 @@ func AnalyzeFileContent(filePath string, username string) (int, int, int, int, i
         start := i * chunk
         end := start + chunk
         if i == routines-1 {
-            // Ensure the last chunk includes the remainder
             end = len(content)
         }
         go cmd.Count(string(content[start:end]), channel)
@@ -45,7 +44,7 @@ func AnalyzeFileContent(filePath string, username string) (int, int, int, int, i
     }
 
     // Store the results in the database
-    err = db.StoreResults(username, filePath, Lines, Words, Vowels, Punctuations, Spaces)
+    err = db.StoreResults(userID, filePath, Lines, Words, Vowels, Punctuations, Spaces)
     if err != nil {
         fmt.Println("Error storing results in database:", err)
         return 0, 0, 0, 0, 0, err
